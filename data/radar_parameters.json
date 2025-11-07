@@ -1,0 +1,10 @@
+{
+  "num_range_bins": 91.0,
+  "num_pulses": 1008,
+  "num_antenna_elements": 4,
+  "fc": 78273143097.91289,
+  "bw": 65901875.5395,
+  "prf": 33333.333333333336,
+  "element_spacing": 0.0009581830629463995,
+  "element_opening_angle": 160.0
+}
