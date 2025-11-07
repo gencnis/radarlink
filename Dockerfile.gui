@@ -1,0 +1,21 @@
+# Dockerfile.gui (Simulator + GUI)
+FROM python:3.10-slim
+
+# System deps for numpy/matplotlib + Tk backend
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libatlas-base-dev libopenblas-dev liblapack-dev \
+    tk tcl libfreetype6 libpng16-16 libx11-6 libxext6 libxrender1 libxft2 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY src /app/src
+COPY data /app/data
+COPY .env /app/.env  || true
+
+RUN pip install --no-cache-dir numpy matplotlib
+
+ENV PYTHONPATH=/app/src
+# Use TkAgg (works well with X11)
+ENV MPLBACKEND=TkAgg
+
+CMD ["python3", "-m", "radarlink.tools.simulator"]

@@ -1,0 +1,61 @@
+build CLI:
+docker build -t radarlink:cli .
+
+run CLI:
+# csv -> ndjson
+docker run --rm -v "$PWD:/app" -e PYTHONPATH=/app/src radarlink:cli \
+  python3 -m radarlink.tools.csv2json /app/data/sample_tracks.csv -o /app/data/sample_tracks.ndjson
+
+# control_hub (stdin -> stdout)
+docker run --rm -i -v "$PWD:/app" \
+  -e PYTHONPATH=/app/src \
+  -e RADAR_LAT=39.9250 -e RADAR_LON=32.8369 -e RADAR_ALT_M=890 \
+  -e INTERCEPTOR_ENU="100,200,10" \
+  radarlink:cli \
+  python3 -m radarlink.tools.control_hub < /app/data/sample_tracks.ndjson > /app/data/out_control.ndjson
+
+
+
+build GUI:
+docker build -f Dockerfile.gui -t radarlink:sim .
+
+run GUI:
+# allow docker to talk to your X server (once per session)
+xhost +local:docker
+
+docker run --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v "$PWD:/app" \
+  -e PYTHONPATH=/app/src \
+  -e RADAR_LAT=39.9250 -e RADAR_LON=32.8369 -e RADAR_ALT_M=890 \
+  -e INTERCEPTOR_ENU="100,200,10" \
+  radarlink:sim \
+  --per-row 0.10 --xy-lim 300 --z-min -100 --z-max 200 --square 6
+
+MAC SPECIFIC:
+xhost + 127.0.0.1
+
+run the container:
+docker run --rm \
+  -e DISPLAY=host.docker.internal:0 \
+  -v "$PWD:/app" \
+  -e PYTHONPATH=/app/src \
+  -e RADAR_LAT=39.9250 -e RADAR_LON=32.8369 -e RADAR_ALT_M=890 \
+  -e INTERCEPTOR_ENU="100,200,10" \
+  radarlink:sim \
+  --per-row 0.10 --xy-lim 300 --z-min -100 --z-max 200 --square 6
+
+
+RUN SIM LOCALLY:
+
+source .env.sim
+
+python3 -m radarlink.tools.simulator \
+  --mode synthetic \
+  --per-row 0.10 \
+  --xy-lim 300 \
+  --z-min -100 --z-max 200 \
+  --square 6 \
+  --seed-positions 42 \
+  --seed-trajectory 7

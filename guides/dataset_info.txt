@@ -1,0 +1,32 @@
+Dataset: https://github.com/openradarinitiative/open_radar_datasets
+
+Open Radar Dataset Structure
+------------------------------------
+
+The dataset is a Python dictionary and primarily contains Doppler spectra, but there is also other useful information.
+Each ".npy" file contains a dictionary of signatures, where each signature corresponds to a full radar track and contains:
+
+Field name          | Explanation
+--------------------|------------------------------------------
+signature           | Numpy array of the Doppler spectra for that track
+ts                  | Timestamp for each spectrum
+range               | Measured range for the detection
+azimuth             | Measured azimuth for the detection
+velocity            | Measured radial velocity
+snr_db              | Estimated SNR in dB (from 1D CFAR)
+x                   | Kalman-filtered X-position
+y                   | Kalman-filtered Y-position
+z                   | Kalman-filtered Z-position
+class_name          | Class name string (e.g., 'uav', 'vehicle', 'human')
+radar_parameters    | Dictionary with radar parameters
+
+The 'radar_parameters' dictionary contains sensor and waveform-specific parameters:
+
+Field name              | Explanation
+-------------------------|---------------------------------
+num_range_bins           | Number of range bins
+num_pulses               | Number of pulses in each frame
+num_antenna_elements     | Number of receiver elements sampled
+fc                       | Center frequency (Hz)
+bw                       | Sampled bandwidth (Hz)
+prf                      | Pulse repetition frequency (PRF)

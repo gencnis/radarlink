@@ -1,0 +1,54 @@
+RadarLink Simulator — usage
+
+Prereqs:
+  export PYTHONPATH="$PWD/src"
+  # Set your radar / interceptor env (same as control_hub):
+  export RADAR_LAT=39.9250
+  export RADAR_LON=32.8369
+  export RADAR_ALT_M=890
+  # Interceptor from LLA (if you prefer this instead of ENU):
+  # export INTERCEPTOR_LAT=40.0000
+  # export INTERCEPTOR_LON=32.9000
+  # export INTERCEPTOR_ALT_M=900
+  # or directly as ENU at radar:
+  export INTERCEPTOR_ENU="100,200,10"
+
+  # Optional: lock angular conventions (else your control_hub auto-detect / defaults apply)
+  # export AZ_UNIT=rad
+  # export AZ_REF=east
+  # export AZ_CW=false
+  # export EL_UNIT=deg
+  # export DEFAULT_ELEVATION=0
+
+Run (synthetic mode):
+  python3 -m radarlink.tools.simulator
+
+  Flags:
+    --per-row 0.10          # seconds per step
+    --xy-lim 300            # axis limits (meters)
+    --z-min -100 --z-max 200
+    --square 6              # red square size (meters, visual)
+    --seed-positions 42     # RNG seed for radar/interceptor initial placement
+    --seed-trajectory 7     # RNG seed for target path
+
+Replay a CSV:
+  python3 -m radarlink.tools.simulator --mode replay --csv data/your_tracks.csv
+
+Replay an NDJSON:
+  python3 -m radarlink.tools.simulator --mode replay --ndjson data/your_tracks.ndjson
+
+Controls:
+  Space / 'p'  — pause / play
+  Drag (paused):
+    - XY panel: drag radar & interceptor points
+    - Z panel: drag radar & interceptor heights
+  Notes:
+    - Visual dragging does NOT show re-anchoring; internally, computations re-anchor
+      so radar is at (0,0,0) for control_hub math—but the visuals stay intuitive.
+
+What you see:
+  - XY panel: blue=radar, green=interceptor, orange=target; RED SQUARE = end of interceptor→target vector (no line)
+  - Z panel: draggable heights for radar & interceptor
+  - 3D panel: moving target with cube overlay
+  - Polar plots: radar POV and interceptor POV (0°=North, CW), driven by control_hub outputs
+  - Tables: positions & ranges/angles
